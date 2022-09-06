@@ -17,10 +17,6 @@ const DatePicker: React.FC<CalendarProps> = ({
 
   return (
     <>
-      {/* {rows.map((item: any) => {
-        return console.log(item);
-      })} */}
-
       <div>
         {rows[0].map(({ value }: any, i: any) => (
           <div key={i}>
