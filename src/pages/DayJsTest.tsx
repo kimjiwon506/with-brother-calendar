@@ -16,6 +16,7 @@ dayjs.extend(WeekOfYear);
 const DayJsTest = () => {
   const today = dayjs();
   const [viewDate, setViewDate] = useState(dayjs());
+  const [selectDate, setSelectDate] = useState(dayjs());
 
   const StartWeek = today.startOf('month').week();
   const EndedWeek = today.endOf('month').week();
@@ -32,11 +33,34 @@ const DayJsTest = () => {
         {Array(7)
           .fill(0)
           .map((item, index) => {
+            let current = viewDate
+              .startOf('week')
+              .week(week)
+              .add(item + index, 'day');
+            if (viewDate.format('MM') === '12') {
+              current = viewDate
+                .startOf('week')
+                .week(week - 52)
+                .add(item + index, 'day');
+            }
+
+            // 현재 날짜 (기준)
+            let isSelected =
+              selectDate.format('YYYYMMDD') === current.format('YYYYMMDD')
+                ? 'selected'
+                : '';
+            let isToday =
+              today.format('YYYYMMDD') === current.format('YYYYMMDD')
+                ? 'today'
+                : '';
+            let isNone =
+              current.format('MM') === viewDate.format('MM') ? '' : 'none';
+
             return (
               <>
                 <div className={`box`} key={`${week}_${item}`}>
                   <div className={`text`}>
-                    <span className={`day`}>{item}</span>
+                    <span className={`day`}>{current.format('D')}</span>
                   </div>
                 </div>
               </>
