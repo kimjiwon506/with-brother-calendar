@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactEventHandler } from 'react';
+import React, { useState, useEffect, createElement } from 'react';
 import styled from 'styled-components';
 
 /** Dayjs */
@@ -21,8 +21,6 @@ const CalendarBody = () => {
   const [modalValue, setModalValue] = useState<
     string | number | readonly string[] | undefined
   >('');
-  const [onSaveModalTodo, setOnSaveModalTodo] = useState(modalValue);
-
   /** createCalendar */
   const createCalendar = () => {
     // 36
@@ -70,18 +68,14 @@ const CalendarBody = () => {
                       }}
                     >
                       <span className={`day`}>{current.format('D')}</span>
-                      {isToday ? (
-                        <span className="isToday">오늘</span>
-                      ) : isSelected ? (
+                      {isToday && <span className="isToday">오늘</span>}
+                      {isSelected && (
                         <button
                           className="isSelected"
                           onClick={() => setOpenModal(true)}
                         >
                           +
                         </button>
-                      ) : null}
-                      {onSaveModalTodo && isSelected && (
-                        <div className="isSaveTodo">{onSaveModalTodo}</div>
                       )}
                     </div>
                   </div>
@@ -107,9 +101,9 @@ const CalendarBody = () => {
 
   const onSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(modalValue);
     setOpenModal(false);
-    setOnSaveModalTodo(modalValue);
+    console.log(modalValue);
+    setModalValue('');
   };
 
   return (
