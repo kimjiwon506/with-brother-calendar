@@ -21,7 +21,6 @@ export interface TodoProps {
 
 /** startOf() : 지정시간 단위에서 시작 날짜 및 시간 : 요일이 아닌 일 기준 */
 const CalendarBody = () => {
-  //오늘날짜와 선택된 날짜가 같은지 보기 위해서 today
   const today = dayjs();
   const [viewDate, setViewDate] = useState(dayjs());
   const [selectDate, setSelectDate] = useState(dayjs());
@@ -39,9 +38,7 @@ const CalendarBody = () => {
 
   /** createCalendar */
   const createCalendar = () => {
-    // 36
     const startWeek = viewDate.startOf('month').week();
-    // 40
     const endWeek =
       viewDate.endOf('month').week() === 1
         ? 53
@@ -75,8 +72,8 @@ const CalendarBody = () => {
                   ? 'today'
                   : '';
               return (
-                <>
-                  <div className={`box`} key={index}>
+                <div key={index}>
+                  <div className={`box`}>
                     <div
                       className={`text ${isSelected} ${isToday}`}
                       onClick={() => {
@@ -96,7 +93,7 @@ const CalendarBody = () => {
                     </div>
                     {isSelected && <TodoListItem todos={todos} />}
                   </div>
-                </>
+                </div>
               );
             })}
         </div>,

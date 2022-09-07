@@ -5,9 +5,9 @@ const TodoListItem = ({ todos }: any) => {
     <div>
       {todos.map((todo: any) => {
         return (
-          <>
+          <div key={todo.id}>
             <div>{todo.text}</div>
-          </>
+          </div>
         );
       })}
     </div>
