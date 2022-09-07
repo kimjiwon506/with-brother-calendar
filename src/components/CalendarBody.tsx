@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createElement } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 
 /** Dayjs */
@@ -6,14 +6,22 @@ import dayjs, { Dayjs } from 'dayjs';
 import WeekDay from 'dayjs/plugin/weekday';
 import IsoWeek from 'dayjs/plugin/isoWeek';
 import WeekOfYear from 'dayjs/plugin/weekOfYear';
+import TodoListItem from './TodoListItem';
 
 /** Dayjs extends */
 dayjs.extend(WeekDay);
 dayjs.extend(IsoWeek);
 dayjs.extend(WeekOfYear);
 
+export interface TodoProps {
+  id: number;
+  text?: string | number | readonly string[] | undefined;
+  checked: boolean;
+}
+
 /** startOf() : 지정시간 단위에서 시작 날짜 및 시간 : 요일이 아닌 일 기준 */
 const CalendarBody = () => {
+  //오늘날짜와 선택된 날짜가 같은지 보기 위해서 today
   const today = dayjs();
   const [viewDate, setViewDate] = useState(dayjs());
   const [selectDate, setSelectDate] = useState(dayjs());
@@ -21,6 +29,14 @@ const CalendarBody = () => {
   const [modalValue, setModalValue] = useState<
     string | number | readonly string[] | undefined
   >('');
+
+  const [todos, setTodos] = useState<TodoProps[]>([
+    { id: 1, text: 'test', checked: false },
+  ]);
+
+  /** TodoId */
+  const nextId = useRef(1);
+
   /** createCalendar */
   const createCalendar = () => {
     // 36
@@ -32,7 +48,7 @@ const CalendarBody = () => {
         : viewDate.endOf('month').week();
 
     let calender = [];
-
+    // 시작주~마지막주 만큼 돌아감
     for (let week = startWeek; week <= endWeek; week++) {
       calender.push(
         <div className="row" key={week}>
@@ -60,7 +76,7 @@ const CalendarBody = () => {
                   : '';
               return (
                 <>
-                  <div className={`box`} key={`${week}_${index}`}>
+                  <div className={`box`} key={index}>
                     <div
                       className={`text ${isSelected} ${isToday}`}
                       onClick={() => {
@@ -78,6 +94,7 @@ const CalendarBody = () => {
                         </button>
                       )}
                     </div>
+                    {isSelected && <TodoListItem todos={todos} />}
                   </div>
                 </>
               );
@@ -88,22 +105,39 @@ const CalendarBody = () => {
     return calender;
   };
 
-  const changeMonth = (date: any, changeString: string) => {
-    switch (changeString) {
-      case 'add':
-        return setViewDate(viewDate.add(1, 'month'));
-      case 'subtract':
-        return setViewDate(viewDate.subtract(1, 'month'));
-      default:
-        return date;
-    }
-  };
+  const changeMonth = useCallback(
+    (date: any, changeString: string) => {
+      switch (changeString) {
+        case 'add':
+          return setViewDate(viewDate.add(1, 'month'));
+        case 'subtract':
+          return setViewDate(viewDate.subtract(1, 'month'));
+        default:
+          return date;
+      }
+    },
+    [viewDate],
+  );
+
+  useEffect(() => {
+    localStorage.setItem('todoValue', JSON.stringify(todos));
+  }, [todos]);
 
   const onSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     setOpenModal(false);
-    console.log(modalValue);
+
+    const newTodo = {
+      id: nextId.current,
+      text: modalValue,
+      checked: false,
+    };
+    nextId.current += 1;
+
     setModalValue('');
+
+    console.log(newTodo);
+    setTodos(todos.concat(newTodo));
   };
 
   return (
@@ -148,16 +182,17 @@ const CalendarBody = () => {
       {openModal ? (
         <dialog open>
           할일 추가하기
-          <input
-            type="text"
-            placeholder="할일입력"
-            value={modalValue}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setModalValue(e.target.value);
-            }}
-          />
           <form onSubmit={onSubmit}>
-            <button>확인</button>
+            <input
+              type="text"
+              placeholder="할일입력"
+              value={modalValue}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setModalValue(e.target.value);
+              }}
+            />
+
+            <button type={'submit'}>확인</button>
             <button
               onClick={() => {
                 setOpenModal(false);
