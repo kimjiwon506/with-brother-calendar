@@ -15,8 +15,9 @@ dayjs.extend(WeekOfYear);
 
 export interface TodoProps {
   id: number;
-  text?: string | number | readonly string[] | undefined;
+  text: string | number | readonly string[] | undefined;
   checked: boolean;
+  day: Dayjs;
 }
 
 /** startOf() : 지정시간 단위에서 시작 날짜 및 시간 : 요일이 아닌 일 기준 */
@@ -29,12 +30,10 @@ const CalendarBody = () => {
     string | number | readonly string[] | undefined
   >('');
 
-  const [todos, setTodos] = useState<TodoProps[]>([
-    { id: 1, text: 'test', checked: false },
-  ]);
+  const [todos, setTodos] = useState<TodoProps[]>([]);
 
   /** TodoId */
-  const nextId = useRef(1);
+  const nextId = useRef(0);
 
   /** createCalendar */
   const createCalendar = () => {
@@ -45,7 +44,6 @@ const CalendarBody = () => {
         : viewDate.endOf('month').week();
 
     let calender = [];
-    // 시작주~마지막주 만큼 돌아감
     for (let week = startWeek; week <= endWeek; week++) {
       calender.push(
         <div className="row" key={week}>
@@ -128,12 +126,14 @@ const CalendarBody = () => {
       id: nextId.current,
       text: modalValue,
       checked: false,
+      day: viewDate,
     };
     nextId.current += 1;
 
     setModalValue('');
 
     console.log(newTodo);
+    /**TODO: 클릭된 달력에 todo가 추가되도록 해야함 */
     setTodos(todos.concat(newTodo));
   };
 
@@ -151,7 +151,7 @@ const CalendarBody = () => {
         ></button>
       </CalnderHeader>
       <CalenderBody>
-        <ClaendarBodyTitle>
+        <CalendarBodyTitle>
           <div>
             <span className="text">SUN</span>
           </div>
@@ -173,8 +173,8 @@ const CalendarBody = () => {
           <div>
             <span className="text">SAT</span>
           </div>
-        </ClaendarBodyTitle>
-        <ClsendarBodyContents>{createCalendar()}</ClsendarBodyContents>
+        </CalendarBodyTitle>
+        <CalendarBodyContents>{createCalendar()}</CalendarBodyContents>
       </CalenderBody>
       {openModal ? (
         <dialog open>
@@ -222,14 +222,14 @@ const CalenderBody = styled.div`
   }
 `;
 
-const ClaendarBodyTitle = styled.div`
+const CalendarBodyTitle = styled.div`
   display: flex;
   div {
     width: 60px;
     text-align: center;
   }
 `;
-const ClsendarBodyContents = styled.div`
+const CalendarBodyContents = styled.div`
   .box {
     width: 60px;
     text-align: center;

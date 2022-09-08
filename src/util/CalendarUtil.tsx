@@ -1,5 +1,4 @@
 import { Dayjs } from 'dayjs';
-import { useEffect } from 'react';
 
 export interface newCalendarCell {
   text: string;
