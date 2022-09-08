@@ -1,255 +1,102 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React from 'react';
+import dayjs from 'dayjs';
 import styled from 'styled-components';
+import { useState } from 'react';
+import CalendarCell from '../components/CalendarCell';
+import CalendarModal from '../components/CalendarModal';
+/**
+ * daysInMonth(): 함수를 사용하여 해당 월의 일 수
+ * dayjs.duration().days(); : 일(0-30)단위로 가져온다.
+ * dayjs.startOf('month').day() : 해당달의 달이 시작되는 나머지 갯수
+ */
 
-/** Dayjs */
-import dayjs, { Dayjs } from 'dayjs';
-import WeekDay from 'dayjs/plugin/weekday';
-import IsoWeek from 'dayjs/plugin/isoWeek';
-import WeekOfYear from 'dayjs/plugin/weekOfYear';
-import TodoListItem from './TodoListItem';
-
-/** Dayjs extends */
-dayjs.extend(WeekDay);
-dayjs.extend(IsoWeek);
-dayjs.extend(WeekOfYear);
-
-export interface TodoProps {
-  id: number;
-  text: string | number | readonly string[] | undefined;
-  checked: boolean;
-  day: Dayjs;
-}
-
-/** startOf() : 지정시간 단위에서 시작 날짜 및 시간 : 요일이 아닌 일 기준 */
-const CalendarBody = () => {
-  const today = dayjs();
-  const [viewDate, setViewDate] = useState(dayjs());
+const CaledarTest = () => {
+  const [date, setDate] = useState(dayjs());
+  // 선택한 날짜 보여주도록 useState 사용
   const [selectDate, setSelectDate] = useState(dayjs());
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [modalValue, setModalValue] = useState<
-    string | number | readonly string[] | undefined
-  >('');
+  // 모달이 열리도록 useState 사용
+  const [openModal, setOpenModal] = useState(false);
+  // 해당달의 총날짜
+  const daysInMonth = date.daysInMonth();
+  // 해당달의 전달이 표시되기 때문에 표시되지 않도록 9월기준 4-1
+  const skip = (date.startOf('month').day() || 7) - 1;
+  const rest = 7 - ((daysInMonth + skip) % 7 || 7);
 
-  const [todos, setTodos] = useState<TodoProps[]>([]);
+  const skiptest = date.startOf('month').day();
+  const today = date.get('date');
+  const todayString = date.get('date').toString();
+  const d = todayString;
 
-  /** TodoId */
-  const nextId = useRef(0);
-
-  /** createCalendar */
-  const createCalendar = () => {
-    const startWeek = viewDate.startOf('month').week();
-    const endWeek =
-      viewDate.endOf('month').week() === 1
-        ? 53
-        : viewDate.endOf('month').week();
-
-    let calender = [];
-    for (let week = startWeek; week <= endWeek; week++) {
-      calender.push(
-        <div className="row" key={week}>
-          {Array(7)
-            .fill(0)
-            .map((number, index) => {
-              let current = viewDate
-                .startOf('week')
-                .week(week)
-                .add(number + index, 'day');
-              if (viewDate.format('MM') === '12') {
-                current = viewDate
-                  .startOf('week')
-                  .week(week - 52)
-                  .add(number + index, 'day');
-              }
-              // 현재 날짜 (기준)
-              let isSelected =
-                selectDate.format('YYYYMMDD') === current.format('YYYYMMDD')
-                  ? 'selected'
-                  : '';
-              let isToday =
-                today.format('YYYYMMDD') === current.format('YYYYMMDD')
-                  ? 'today'
-                  : '';
-              return (
-                <div key={index}>
-                  <div className={`box`}>
-                    <div
-                      className={`text ${isSelected} ${isToday}`}
-                      onClick={() => {
-                        setSelectDate(current);
-                      }}
-                    >
-                      <span className={`day`}>{current.format('D')}</span>
-                      {isToday && <span className="isToday">오늘</span>}
-                      {isSelected && (
-                        <button
-                          className="isSelected"
-                          onClick={() => setOpenModal(true)}
-                        >
-                          +
-                        </button>
-                      )}
-                    </div>
-                    {isSelected && <TodoListItem todos={todos} />}
-                  </div>
-                </div>
-              );
-            })}
-        </div>,
-      );
-    }
-    return calender;
-  };
-
-  const changeMonth = useCallback(
-    (date: any, changeString: string) => {
-      switch (changeString) {
-        case 'add':
-          return setViewDate(viewDate.add(1, 'month'));
-        case 'subtract':
-          return setViewDate(viewDate.subtract(1, 'month'));
-        default:
-          return date;
-      }
-    },
-    [viewDate],
-  );
-
-  useEffect(() => {
-    localStorage.setItem('todoValue', JSON.stringify(todos));
-  }, [todos]);
-
-  const onSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setOpenModal(false);
-
-    const newTodo = {
-      id: nextId.current,
-      text: modalValue,
-      checked: false,
-      day: viewDate,
-    };
-    nextId.current += 1;
-
-    setModalValue('');
-
-    console.log(newTodo);
-    /**TODO: 클릭된 달력에 todo가 추가되도록 해야함 */
-    setTodos(todos.concat(newTodo));
-  };
+  const calendarArray = [
+    // 해당달이 시작되기 전에는 NaN으로 채운다.
+    ...Array(skip).fill(NaN),
+    // 해당달이 의 배열에 keys()로 순차를 부여한다.
+    ...Array(daysInMonth).keys(),
+    ...Array(rest).fill(NaN),
+  ];
 
   return (
-    <CalendarWrap>
-      <CalnderHeader>
-        <button
-          className="previous_icon"
-          onClick={() => changeMonth(viewDate, 'subtract')}
-        ></button>
-        <span className="thisMonth">{viewDate.format('MM')}월</span>
-        <button
-          className="next_icon"
-          onClick={() => changeMonth(viewDate, 'add')}
-        ></button>
-      </CalnderHeader>
-      <CalenderBody>
-        <CalendarBodyTitle>
-          <div>
-            <span className="text">SUN</span>
-          </div>
-          <div>
-            <span className="text">MON</span>
-          </div>
-          <div>
-            <span className="text">TUE</span>
-          </div>
-          <div>
-            <span className="text">WED</span>
-          </div>
-          <div>
-            <span className="text">THU</span>
-          </div>
-          <div>
-            <span className="text">FRI</span>
-          </div>
-          <div>
-            <span className="text">SAT</span>
-          </div>
-        </CalendarBodyTitle>
-        <CalendarBodyContents>{createCalendar()}</CalendarBodyContents>
-      </CalenderBody>
-      {openModal ? (
-        <dialog open>
-          할일 추가하기
-          <form onSubmit={onSubmit}>
-            <input
-              type="text"
-              placeholder="할일입력"
-              value={modalValue}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setModalValue(e.target.value);
-              }}
-            />
-
-            <button type={'submit'}>확인</button>
-            <button
-              onClick={() => {
-                setOpenModal(false);
-              }}
+    <Wrap>
+      <div className="navigator">
+        <button onClick={() => setDate(date.add(-1, 'month'))}>-</button>
+        <p>{date.format('MMMM YYYY')}</p>
+        <button onClick={() => setDate(date.add(1, 'month'))}>+</button>
+      </div>
+      <div className="weekdays">
+        <p>Monday</p>
+        <p>Tuesday</p>
+        <p>Wednesday</p>
+        <p>Thrusday</p>
+        <p>Friday</p>
+        <p>Saturday</p>
+        <p>Sunday</p>
+      </div>
+      <div className="calendar">
+        {calendarArray.map((date: any, i: number) => {
+          const todayTest = date + 1 === today ? 'today' : '';
+          const selectedTest = selectDate === date + 1 ? 'selected' : '';
+          return (
+            <CalendarCellWrap
+              key={i}
+              className={`cell ${todayTest} ${selectedTest}`}
+              onClick={() => setSelectDate(date + 1)}
             >
-              취소
-            </button>
-          </form>
-        </dialog>
-      ) : null}
-    </CalendarWrap>
+              <CalendarCell date={date} key={i} />
+              {selectDate === date + 1 && (
+                <CalendarEditButton onClick={() => setOpenModal(prev => !prev)}>
+                  plus
+                </CalendarEditButton>
+              )}
+              {selectDate === date + 1 && openModal && <CalendarModal />}
+            </CalendarCellWrap>
+          );
+        })}
+      </div>
+    </Wrap>
   );
 };
+export default CaledarTest;
 
-const CalendarWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin: 0 auto;
-`;
-
-const CalnderHeader = styled.div`
-  display: flex;
-`;
-
-const CalenderBody = styled.div`
-  .row {
-    display: flex;
+const Wrap = styled.div`
+  .weekdays,
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(5, 2fr) repeat(2, 1fr);
   }
 `;
 
-const CalendarBodyTitle = styled.div`
-  display: flex;
-  div {
-    width: 60px;
-    text-align: center;
-  }
-`;
-const CalendarBodyContents = styled.div`
-  .box {
-    width: 60px;
-    text-align: center;
-  }
-  .text {
-    display: flex;
-    flex-direction: column;
-  }
-  .isToday {
+const CalendarCellWrap = styled.button`
+  display: block;
+  all: unset;
+  &.today {
     background: gray;
   }
-  .selected {
-    background-color: gray;
-  }
-  .isSaveTodo {
-    width: 60px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  &.selected {
+    background: gray;
   }
 `;
 
-export default CalendarBody;
+const CalendarEditButton = styled.button`
+  display: block;
+  all: unset;
+`;
