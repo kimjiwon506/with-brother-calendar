@@ -1,73 +1,102 @@
-import React, { useState } from 'react';
-import dayjs, { Dayjs } from 'dayjs';
-import CalendarCell from './../components/CalendarCell';
+import React from 'react';
+import dayjs from 'dayjs';
+import styled from 'styled-components';
+import { useState } from 'react';
+import CalendarCell from '../components/CalendarCell';
+import CalendarModal from '../components/CalendarModal';
+/**
+ * daysInMonth(): 함수를 사용하여 해당 월의 일 수
+ * dayjs.duration().days(); : 일(0-30)단위로 가져온다.
+ * dayjs.startOf('month').day() : 해당달의 달이 시작되는 나머지 갯수
+ */
 
-// const CalendarTest = () => {
-//   const [date, setDate] = useState('test');
-//   const now = dayjs();
-//   const CreateCalendarWeek = () => {
-//     let calender = [];
-//     //요일출력
-//     calender.push(
-//       Array(7)
-//         .fill(0)
-//         .map((number, index) => {
-//           let current = now
-//             .startOf('week')
-//             .locale('en')
-//             .add(number + index, 'day');
-//           return <span className="row">{current.format('ddd')}</span>;
-//         }),
-//     );
-//     return calender;
-//   };
-//   const CreateCalendarMonth = () => {
-//     let calender = [];
-//     const startWeek = now.startOf('month').week();
-//     const endWeek =
-//       now.endOf('month').week() === 1 ? 53 : now.endOf('month').week();
-//     for (let week = startWeek; week <= endWeek; week++) {
-//       calender.push(
-//         <div>
-//           {Array(7)
-//             .fill(0)
-//             .map((item, index) => {
-//               let current = now
-//                 .startOf('week')
-//                 .week(week)
-//                 .add(item + index, 'day');
-//               if (now.format('MM') === '12') {
-//                 current = now
-//                   .startOf('week')
-//                   .week(week - 52)
-//                   .add(item + index, 'day');
-//               }
-//               return <></>;
-//             })}
-//         </div>,
-//       );
-//     }
-//     return calender;
-//   };
-//   return (
-//     <div>
-//       {/* <div>오늘날짜:{day.format()}</div>
-//         <div>오늘날짜:{day.get('D')}</div>
-//         <div>시작하는주:{day.startOf('month').week()}</div>
-//         <div>시작하는주:{day.startOf('month').format()}</div> */}
-//       <span className="row">{CreateCalendarWeek()}</span>
-//       <span className="row">{CreateCalendarMonth()}</span>
-//     </div>
-//   );
-// };
+const CaledarTest = () => {
+  const [date, setDate] = useState(dayjs());
+  // 선택한 날짜 보여주도록 useState 사용
+  const [selectDate, setSelectDate] = useState(dayjs());
+  // 모달이 열리도록 useState 사용
+  const [openModal, setOpenModal] = useState(false);
+  // 해당달의 총날짜
+  const daysInMonth = date.daysInMonth();
+  // 해당달의 전달이 표시되기 때문에 표시되지 않도록 9월기준 4-1
+  const skip = (date.startOf('month').day() || 7) - 1;
+  const rest = 7 - ((daysInMonth + skip) % 7 || 7);
 
-const CalendarTest = () => {
-  const [date, setDate] = useState<string | undefined>('test');
-  const [now, setNow] = useState<any>(dayjs());
+  const skiptest = date.startOf('month').day();
+  const today = date.get('date');
+  const todayString = date.get('date').toString();
+  const d = todayString;
+
+  const calendarArray = [
+    // 해당달이 시작되기 전에는 NaN으로 채운다.
+    ...Array(skip).fill(NaN),
+    // 해당달이 의 배열에 keys()로 순차를 부여한다.
+    ...Array(daysInMonth).keys(),
+    ...Array(rest).fill(NaN),
+  ];
+
   return (
-    <>
-      <CalendarCell date={date} now={now} />
-    </>
+    <Wrap>
+      <div className="navigator">
+        <button onClick={() => setDate(date.add(-1, 'month'))}>-</button>
+        <p>{date.format('MMMM YYYY')}</p>
+        <button onClick={() => setDate(date.add(1, 'month'))}>+</button>
+      </div>
+      <div className="weekdays">
+        <p>Monday</p>
+        <p>Tuesday</p>
+        <p>Wednesday</p>
+        <p>Thrusday</p>
+        <p>Friday</p>
+        <p>Saturday</p>
+        <p>Sunday</p>
+      </div>
+      <div className="calendar">
+        {calendarArray.map((date: any, i: number) => {
+          const todayTest = date + 1 === today ? 'today' : '';
+          const selectedTest = selectDate === date + 1 ? 'selected' : '';
+          return (
+            <CalendarCellWrap
+              key={i}
+              className={`cell ${todayTest} ${selectedTest}`}
+              onClick={() => setSelectDate(date + 1)}
+            >
+              <CalendarCell date={date} key={i} />
+              {selectDate === date + 1 && (
+                <CalendarEditButton onClick={() => setOpenModal(prev => !prev)}>
+                  plus
+                </CalendarEditButton>
+              )}
+              {selectDate === date + 1 && openModal && <CalendarModal />}
+            </CalendarCellWrap>
+          );
+        })}
+      </div>
+    </Wrap>
   );
 };
-export default CalendarTest;
+export default CaledarTest;
+
+const Wrap = styled.div`
+  .weekdays,
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(5, 2fr) repeat(2, 1fr);
+  }
+`;
+
+const CalendarCellWrap = styled.button`
+  display: block;
+  all: unset;
+  &.today {
+    background: gray;
+  }
+  &.selected {
+    background: gray;
+  }
+`;
+
+const CalendarEditButton = styled.button`
+  display: block;
+  all: unset;
+`;

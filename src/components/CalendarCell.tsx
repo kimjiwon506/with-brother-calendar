@@ -1,20 +1,12 @@
 import React from 'react';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
-// export interface newCalendarCell {
-//   text: string;
-//   value: Dayjs;
-// }
-
-const CalendarCell = (
-  { date }: any,
-  now: string | number | dayjs.Dayjs | Date | null | undefined,
-) => {
-  return (
-    <>
-      <div>{date}</div>
-    </>
-  );
+const CalendarCell = ({ date }: any) => {
+  const now = dayjs();
+  const todayString = now.get('date').toString();
+  const d = document.getElementsByName('.9');
+  //const today = todayString == d ? 'today' : '';
+  return <span className={`${''}`}>{isFinite(date) && ++date}</span>;
 };
 
 export default CalendarCell;

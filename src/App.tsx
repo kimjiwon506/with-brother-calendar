@@ -1,7 +1,6 @@
 import { BrowserRouter } from 'react-router-dom';
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
-import './App.css';
 import Routes from './routes';
 
 export interface IAppProps {}
