@@ -10,6 +10,18 @@ import CalendarModal from '../components/CalendarModal';
  * dayjs.startOf('month').day() : 해당달의 달이 시작되는 나머지 갯수
  */
 
+/**
+ * TODO:
+ * date를 나타내는 숫자는 Cell 컴포넌트로 분리
+ * modal 컴포넌트 분리
+ * 토요일, 일요일 색상변경
+ * Todo에 현재 date 추가한뒤 스토리지에 올리기
+ * pages - calendar
+ * components - calendarCell
+ *            - calendarHeader
+ *            - calendarBody
+ */
+
 const CaledarTest = () => {
   const [date, setDate] = useState(dayjs());
   // 선택한 날짜 보여주도록 useState 사용
