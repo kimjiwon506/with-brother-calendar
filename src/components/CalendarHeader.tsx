@@ -11,15 +11,17 @@ const CalendarHeader: React.FC<DateProps> = ({ date, setDate }) => {
   return (
     <CalendarHeaderWrap>
       <ControlMonth>
-        <button onClick={() => setDate(date.add(-1, 'month'))}>-</button>
+        <ControlMonthButton onClick={() => setDate(date.add(-1, 'month'))}>
+          -
+        </ControlMonthButton>
         <p>{date.format('MMMM YYYY')}</p>
-        <button
+        <ControlMonthButton
           onClick={() => {
             setDate(date.add(1, 'month'));
           }}
         >
           +
-        </button>
+        </ControlMonthButton>
       </ControlMonth>
       <WeekDays>
         <p>Monday</p>
@@ -42,6 +44,15 @@ const CalendarHeaderWrap = styled.div`
 
 const ControlMonth = styled.div`
   display: flex;
+  align-items: center;
+`;
+
+const ControlMonthButton = styled.div`
+  all: unset;
+  display: block;
+  font-size: 20px;
+  padding: 20px;
+  cursor: pointer;
 `;
 
 const WeekDays = styled.div`

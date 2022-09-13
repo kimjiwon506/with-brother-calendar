@@ -2,7 +2,7 @@ import React from 'react';
 
 const TodoListItem = ({ todos }: any) => {
   return (
-    <>
+    <div>
       {todos.map((todo: any, index: number) => {
         return (
           <div key={index}>
@@ -10,7 +10,7 @@ const TodoListItem = ({ todos }: any) => {
           </div>
         );
       })}
-    </>
+    </div>
   );
 };
 

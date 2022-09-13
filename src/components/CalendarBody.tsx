@@ -8,7 +8,7 @@ import TodoListItem from './TodoListItem';
 
 const CalendarBody: React.FC = () => {
   // Calendar를 보여주는 useState
-  const [date, setDate] = useState(dayjs());
+  const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
 
   const daysInMonth = date.daysInMonth();
   const skip = (date.startOf('month').day() || 7) - 1;
@@ -19,9 +19,7 @@ const CalendarBody: React.FC = () => {
    * rest : 남은일수
    */
   const calendarArray = [
-    // 해당달이 시작되기 전에는 NaN으로 채운다.
     ...Array(skip).fill(NaN),
-    // 해당달이 의 배열에 keys()로 순차를 부여한다.
     ...Array(daysInMonth).keys(),
     ...Array(rest).fill(NaN),
   ];
@@ -31,14 +29,11 @@ const CalendarBody: React.FC = () => {
    * selected : 선택한 날짜 보여질 수 있도록 useState사용
    * openModal : selected되었을때 추가 버튼을 누르면 모달이 나오도록 useState사용
    */
-  const [selected, setSelected] = useState(dayjs());
-  const [openModal, setOpenModal] = useState(false);
-  /**
-   * todo추가 useState
-   */
+  const [selected, setSelected] = useState<dayjs.Dayjs>(dayjs());
+  const [openModal, setOpenModal] = useState<boolean>(false);
   interface TodoProps {
     id: dayjs.Dayjs;
-    text: string | number | string[] | any;
+    text: string | number | string[];
   }
   const [todos, setTodos] = useState<TodoProps[]>([]);
   /**
@@ -53,13 +48,8 @@ const CalendarBody: React.FC = () => {
     };
     setTodos(todos.concat(todo));
   };
-  /**
-   * 로컬스토리지에 todos 저장
-   */
+
   useEffect(() => localStorage.setItem('todo', JSON.stringify(todos)), [todos]);
-  // useEffect(()=>
-  //   JSON.parse(localStorage.getItem('todo') || '{}')
-  // ,[])
 
   useEffect(() => {
     const getLocalStorage = JSON.parse(localStorage.getItem('todo') || '{}');
@@ -70,7 +60,9 @@ const CalendarBody: React.FC = () => {
     <>
       <CalendarHeader date={date} setDate={setDate} />
       <CalendarContents>
-        {calendarArray.map((cellDate: any, index: number) => {
+        {calendarArray.map((cellDate, index) => {
+          console.log(typeof cellDate);
+
           const todayMark = cellDate + 1 === today ? 'today' : '';
           const selecTedMark = selected === cellDate + 1 ? 'selected' : '';
           const saturdayMark =
@@ -108,7 +100,7 @@ const CalendarBody: React.FC = () => {
                 </>
               )}
               <CalendarCell date={cellDate} />
-              {<TodoListItem todos={todos} />}
+              {selecTedMark ? <TodoListItem todos={todos} /> : <></>}
             </CalendarCellWrap>
           );
         })}
