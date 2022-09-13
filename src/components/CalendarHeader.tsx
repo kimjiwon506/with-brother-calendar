@@ -24,13 +24,13 @@ const CalendarHeader: React.FC<DateHeaderProps> = ({ date, setDate }) => {
         </ControlMonthButton>
       </ControlMonth>
       <WeekDays>
-        <p>Monday</p>
-        <p>Tuesday</p>
-        <p>Wednesday</p>
-        <p>Thrusday</p>
-        <p>Friday</p>
-        <p>Saturday</p>
-        <p>Sunday</p>
+        <p>Mon</p>
+        <p>Tue</p>
+        <p>Wed</p>
+        <p>Thr</p>
+        <p>Fri</p>
+        <p>Sat</p>
+        <p>Sun</p>
       </WeekDays>
     </CalendarHeaderWrap>
   );

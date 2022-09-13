@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import dayjs from 'dayjs';
 import CalendarBody from '../components/CalendarBody';
 import styled from 'styled-components';
+import CalendarHeader from '../components/CalendarHeader';
 
 /**
  * TODO:
@@ -15,9 +17,11 @@ import styled from 'styled-components';
  */
 
 const Calendar = () => {
+  const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
   return (
     <CalendarWrap>
-      <CalendarBody />
+      <CalendarHeader date={date} setDate={setDate} />
+      <CalendarBody date={date} setDate={setDate} />
     </CalendarWrap>
   );
 };

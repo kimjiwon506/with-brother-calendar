@@ -1,13 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
-import CalendarHeader from './CalendarHeader';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import dayjs from 'dayjs';
 import CalendarCell from './CalendarCell';
-import styled from 'styled-components';
+import CalendarHeader from './CalendarHeader';
 import CalendarModal from './CalendarModal';
+import styled from 'styled-components';
 import { FiPlusCircle } from 'react-icons/fi';
 
-const CalendarBody: React.FC = () => {
-  const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
+interface DateBodyContentsProps {
+  date: dayjs.Dayjs;
+  setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
+}
+
+const CalendarBody: React.FC<DateBodyContentsProps> = ({ date, setDate }) => {
   const [selected, setSelected] = useState<dayjs.Dayjs>(dayjs());
   const [openModal, setOpenModal] = useState<boolean>(false);
 
@@ -48,7 +58,6 @@ const CalendarBody: React.FC = () => {
 
   return (
     <>
-      <CalendarHeader date={date} setDate={setDate} />
       <CalendarContents>
         {calendarArray.map((cellDate, index) => {
           const todayMark = cellDate + 1 === today ? 'today' : '';
