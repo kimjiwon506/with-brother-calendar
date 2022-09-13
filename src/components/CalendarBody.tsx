@@ -1,44 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import CalendarHeader from './CalendarHeader';
 import dayjs from 'dayjs';
+import CalendarCell from './CalendarCell';
 import styled from 'styled-components';
-import { useState } from 'react';
-import CalendarCell from '../components/CalendarCell';
-import CalendarModal from '../components/CalendarModal';
-/**
- * daysInMonth(): 함수를 사용하여 해당 월의 일 수
- * dayjs.duration().days(); : 일(0-30)단위로 가져온다.
- * dayjs.startOf('month').day() : 해당달의 달이 시작되는 나머지 갯수
- */
+import CalendarModal from './CalendarModal';
+import TodoListItem from './TodoListItem';
 
-/**
- * TODO:
- * date를 나타내는 숫자는 Cell 컴포넌트로 분리
- * modal 컴포넌트 분리
- * 토요일, 일요일 색상변경
- * Todo에 현재 date 추가한뒤 스토리지에 올리기
- * pages - calendar
- * components - calendarCell
- *            - calendarHeader
- *            - calendarBody
- */
-
-const CaledarTest = () => {
+const CalendarBody: React.FC = () => {
+  // Calendar를 보여주는 useState
   const [date, setDate] = useState(dayjs());
-  // 선택한 날짜 보여주도록 useState 사용
-  const [selectDate, setSelectDate] = useState(dayjs());
-  // 모달이 열리도록 useState 사용
-  const [openModal, setOpenModal] = useState(false);
-  // 해당달의 총날짜
+
   const daysInMonth = date.daysInMonth();
-  // 해당달의 전달이 표시되기 때문에 표시되지 않도록 9월기준 4-1
   const skip = (date.startOf('month').day() || 7) - 1;
   const rest = 7 - ((daysInMonth + skip) % 7 || 7);
-
-  const skiptest = date.startOf('month').day();
-  const today = date.get('date');
-  const todayString = date.get('date').toString();
-  const d = todayString;
-
+  /**
+   * skip : 전달과 현재달 겹치는 갯수 NaN으로 부여
+   * daysInMonth : 해당하는 달의 갯수를 keys로 부여함
+   * rest : 남은일수
+   */
   const calendarArray = [
     // 해당달이 시작되기 전에는 NaN으로 채운다.
     ...Array(skip).fill(NaN),
@@ -46,69 +25,117 @@ const CaledarTest = () => {
     ...Array(daysInMonth).keys(),
     ...Array(rest).fill(NaN),
   ];
+  // 오늘날짜 보여지도록
+  const today = date.get('date');
+  /**
+   * selected : 선택한 날짜 보여질 수 있도록 useState사용
+   * openModal : selected되었을때 추가 버튼을 누르면 모달이 나오도록 useState사용
+   */
+  const [selected, setSelected] = useState(dayjs());
+  const [openModal, setOpenModal] = useState(false);
+  /**
+   * todo추가 useState
+   */
+  interface TodoProps {
+    id: dayjs.Dayjs;
+    text: string | number | string[] | any;
+  }
+  const [todos, setTodos] = useState<TodoProps[]>([]);
+  /**
+   * onInsert함수
+   * id: date.format() - 2022-09-12T15:18:20+09:00
+   * selected : 선택한 날짜
+   */
+  const onInsert = (text: string) => {
+    const todo = {
+      id: selected,
+      text: text,
+    };
+    setTodos(todos.concat(todo));
+  };
+  /**
+   * 로컬스토리지에 todos 저장
+   */
+  useEffect(() => localStorage.setItem('todo', JSON.stringify(todos)), [todos]);
+  // useEffect(()=>
+  //   JSON.parse(localStorage.getItem('todo') || '{}')
+  // ,[])
+
+  useEffect(() => {
+    const getLocalStorage = JSON.parse(localStorage.getItem('todo') || '{}');
+    console.log(getLocalStorage);
+  }, [todos]);
 
   return (
-    <Wrap>
-      <div className="navigator">
-        <button onClick={() => setDate(date.add(-1, 'month'))}>-</button>
-        <p>{date.format('MMMM YYYY')}</p>
-        <button onClick={() => setDate(date.add(1, 'month'))}>+</button>
-      </div>
-      <div className="weekdays">
-        <p>Monday</p>
-        <p>Tuesday</p>
-        <p>Wednesday</p>
-        <p>Thrusday</p>
-        <p>Friday</p>
-        <p>Saturday</p>
-        <p>Sunday</p>
-      </div>
-      <div className="calendar">
-        {calendarArray.map((date: any, i: number) => {
-          const todayTest = date + 1 === today ? 'today' : '';
-          const selectedTest = selectDate === date + 1 ? 'selected' : '';
+    <>
+      <CalendarHeader date={date} setDate={setDate} />
+      <CalendarContents>
+        {calendarArray.map((cellDate: any, index: number) => {
+          const todayMark = cellDate + 1 === today ? 'today' : '';
+          const selecTedMark = selected === cellDate + 1 ? 'selected' : '';
+          const saturdayMark =
+            index + 1 === 6 ||
+            index + 1 === 13 ||
+            index + 1 === 20 ||
+            index + 1 === 27 ||
+            index + 1 === 34
+              ? 'saturday'
+              : '';
+          const sundayMark =
+            index + 1 === 7 ||
+            index + 1 === 14 ||
+            index + 1 === 21 ||
+            index + 1 === 28 ||
+            index + 1 === 35
+              ? 'sunday'
+              : '';
+
           return (
             <CalendarCellWrap
-              key={i}
-              className={`cell ${todayTest} ${selectedTest}`}
-              onClick={() => setSelectDate(date + 1)}
+              key={index}
+              className={`${todayMark} ${selecTedMark} ${saturdayMark} ${sundayMark}`}
+              onClick={() => setSelected(cellDate + 1)}
             >
-              <CalendarCell date={date} key={i} />
-              {selectDate === date + 1 && (
-                <CalendarEditButton onClick={() => setOpenModal(prev => !prev)}>
-                  plus
-                </CalendarEditButton>
+              {selecTedMark && (
+                <>
+                  <div onClick={() => setOpenModal(true)}>+</div>
+                  {openModal && (
+                    <CalendarModal
+                      setOpenModal={setOpenModal}
+                      onInsert={onInsert}
+                    />
+                  )}
+                </>
               )}
-              {selectDate === date + 1 && openModal && <CalendarModal />}
+              <CalendarCell date={cellDate} />
+              {<TodoListItem todos={todos} />}
             </CalendarCellWrap>
           );
         })}
-      </div>
-    </Wrap>
+      </CalendarContents>
+    </>
   );
 };
-export default CaledarTest;
 
-const Wrap = styled.div`
-  .weekdays,
-  .calendar {
-    display: grid;
-    grid-template-columns: repeat(5, 2fr) repeat(2, 1fr);
-  }
-`;
-
-const CalendarCellWrap = styled.button`
-  display: block;
-  all: unset;
+const CalendarCellWrap = styled.div`
   &.today {
-    background: gray;
+    background-color: #ceaf5f;
   }
   &.selected {
-    background: gray;
+    background-color: bisque;
+  }
+  &.saturday {
+    color: red;
+  }
+  &.sunday {
+    color: blue;
   }
 `;
 
-const CalendarEditButton = styled.button`
-  display: block;
-  all: unset;
+const CalendarContents = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
 `;
+
+export default CalendarBody;

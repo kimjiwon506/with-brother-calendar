@@ -1,13 +1,8 @@
 import { BrowserRouter } from 'react-router-dom';
-import React, { useState } from 'react';
-import dayjs from 'dayjs';
+import React from 'react';
 import Routes from './routes';
 
-export interface IAppProps {}
-
-const App: React.FC<IAppProps> = () => {
-  const [date, setDate] = useState(dayjs());
-
+const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes></Routes>

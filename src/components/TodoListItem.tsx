@@ -2,15 +2,15 @@ import React from 'react';
 
 const TodoListItem = ({ todos }: any) => {
   return (
-    <div>
-      {todos.map((todo: any) => {
+    <>
+      {todos.map((todo: any, index: number) => {
         return (
-          <div key={todo.id}>
+          <div key={index}>
             <div>{todo.text}</div>
           </div>
         );
       })}
-    </div>
+    </>
   );
 };
 

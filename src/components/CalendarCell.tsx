@@ -1,12 +1,12 @@
 import React from 'react';
-import dayjs from 'dayjs';
+import styled from 'styled-components';
 
 const CalendarCell = ({ date }: any) => {
-  const now = dayjs();
-  const todayString = now.get('date').toString();
-  const d = document.getElementsByName('.9');
-  //const today = todayString == d ? 'today' : '';
-  return <span className={`${''}`}>{isFinite(date) && ++date}</span>;
+  return <CellButton>{isFinite(date) && ++date}</CellButton>;
 };
+
+const CellButton = styled.button`
+  all: unset;
+`;
 
 export default CalendarCell;
