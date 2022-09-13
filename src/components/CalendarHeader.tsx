@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 
 interface DateProps {
-  setDate: any;
   date: dayjs.Dayjs;
+  setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
 }
 
 const CalendarHeader: React.FC<DateProps> = ({ date, setDate }) => {
