@@ -2,12 +2,12 @@ import dayjs from 'dayjs';
 import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 
-interface DateProps {
+interface DateHeaderProps {
   date: dayjs.Dayjs;
   setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
 }
 
-const CalendarHeader: React.FC<DateProps> = ({ date, setDate }) => {
+const CalendarHeader: React.FC<DateHeaderProps> = ({ date, setDate }) => {
   return (
     <CalendarHeaderWrap>
       <ControlMonth>
