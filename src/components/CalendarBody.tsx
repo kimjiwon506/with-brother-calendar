@@ -4,6 +4,7 @@ import React, {
   useRef,
   Dispatch,
   SetStateAction,
+  useCallback,
 } from 'react';
 import dayjs from 'dayjs';
 import CalendarCell from './CalendarCell';
@@ -20,6 +21,7 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date }) => {
   const [selected, setSelected] = useState<dayjs.Dayjs>(dayjs());
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [todos, setTodos] = useState<TodoProps[]>([]);
+  const [newTodo, setNewTodo] = useState<TodoProps[]>([]);
 
   const daysInMonth = date.daysInMonth();
   const skip = (date.startOf('month').day() || 7) - 1;
@@ -37,20 +39,23 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date }) => {
     id: number;
     todo: dayjs.Dayjs;
     value: string;
-    text: string | number | string[];
+    text: string;
   }
 
-  const onInsert = (text: string) => {
-    const todo = {
-      id: indexId.current,
-      todo: selected,
-      value: date.format('YY-MM-DD'),
-      text: text,
-    };
-    indexId.current += 1;
-    setTodos(todos.concat(todo));
-  };
-  const [newTodo, setNewTodo] = useState<TodoProps[]>([]);
+  const onInsert = useCallback(
+    (text: string) => {
+      const todo = {
+        id: indexId.current,
+        todo: selected,
+        value: date.format('YY-MM-DD'),
+        text: text,
+      };
+      indexId.current += 1;
+      setTodos(todos.concat(todo));
+    },
+    [todos],
+  );
+
   useEffect(() => localStorage.setItem('todo', JSON.stringify(todos)), [todos]);
   useEffect(() => {
     const getLocalStorage = JSON.parse(localStorage.getItem('todo') || '{}');
@@ -60,9 +65,9 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date }) => {
   return (
     <>
       <CalendarContents>
-        {calendarArray.map((cellDate, index) => {
-          const todayMark = cellDate + 1 === today ? 'today' : '';
-          const selecTedMark = selected === cellDate + 1 ? 'selected' : '';
+        {calendarArray.map((date, index) => {
+          const todayMark = date + 1 === today ? 'today' : '';
+          const selecTedMark = selected === date + 1 ? 'selected' : '';
           const saturdayMark =
             index + 1 === 6 ||
             index + 1 === 13 ||
@@ -83,7 +88,7 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date }) => {
           return (
             <CalendarCellWrap
               className={`${todayMark} ${selecTedMark} ${saturdayMark} ${sundayMark}`}
-              onClick={() => setSelected(cellDate + 1)}
+              onClick={() => setSelected(date + 1)}
               key={index}
             >
               {selecTedMark && (
@@ -101,7 +106,16 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date }) => {
                   )}
                 </>
               )}
-              <CalendarCell date={cellDate} />
+              <CalendarCell date={date} />
+              {newTodo.map((item, index) => (
+                <div key={index}>
+                  {item.id === index && (
+                    <>
+                      {item.id} : {item.text}
+                    </>
+                  )}
+                </div>
+              ))}
             </CalendarCellWrap>
           );
         })}
