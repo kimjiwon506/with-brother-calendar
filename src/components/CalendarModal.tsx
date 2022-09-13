@@ -1,4 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
+import styled from 'styled-components';
 
 interface ModalProps {
   setOpenModal: Dispatch<SetStateAction<boolean>>;
@@ -18,26 +19,55 @@ const CalendarModal: React.FC<ModalProps> = ({ setOpenModal, onInsert }) => {
   };
 
   return (
-    <dialog open>
-      할일 추가하기
-      <form onSubmit={onSubmit}>
+    <ModalWrap open>
+      <form method="dialog" onSubmit={onSubmit}>
+        <label>할일추가하기</label>
         <input
           value={value}
           onChange={onChange}
           type="text"
           placeholder="할일입력"
         />
-        <button>확인</button>
-        <button
-          onClick={() => {
-            setOpenModal(false);
-          }}
-        >
-          취소
-        </button>
+        <ModalButtonWrap>
+          <button>확인</button>
+          <button
+            onClick={() => {
+              setOpenModal(false);
+            }}
+          >
+            취소
+          </button>
+        </ModalButtonWrap>
       </form>
-    </dialog>
+    </ModalWrap>
   );
 };
+
+const ModalWrap = styled.dialog`
+  padding: 10px 20px;
+  z-index: 1;
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  label {
+    padding: 10px 0;
+  }
+  input {
+    all: unset;
+    border-bottom: 1px solid #cccccc;
+    outline: none;
+    text-align: left;
+    margin: 10px 0px;
+  }
+`;
+const ModalButtonWrap = styled.div`
+  display: flex;
+  button {
+    all: unset;
+    cursor: pointer;
+    padding: 5px 30px 5px 30px;
+  }
+`;
 
 export default CalendarModal;

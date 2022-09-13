@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CalendarBody from '../components/CalendarBody';
+import styled from 'styled-components';
 
 /**
  * TODO:
@@ -15,10 +16,15 @@ import CalendarBody from '../components/CalendarBody';
 
 const Calendar = () => {
   return (
-    <div>
+    <CalendarWrap>
       <CalendarBody />
-    </div>
+    </CalendarWrap>
   );
 };
+
+const CalendarWrap = styled.div`
+  max-width: 640px;
+  margin: 0 auto;
+`;
 
 export default Calendar;

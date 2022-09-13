@@ -6,7 +6,11 @@ interface CalendarCellProps {
 }
 
 const CalendarCell: React.FC<CalendarCellProps> = ({ date }) => {
-  return <CellButton>{isFinite(date) && ++date}</CellButton>;
+  return (
+    <>
+      <CellButton>{isFinite(date) && ++date}</CellButton>
+    </>
+  );
 };
 
 const CellButton = styled.button`
