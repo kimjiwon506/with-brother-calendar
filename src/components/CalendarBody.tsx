@@ -21,7 +21,7 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date }) => {
   const [selected, setSelected] = useState<dayjs.Dayjs>(dayjs());
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [todos, setTodos] = useState<TodoProps[]>([]);
-  const [newTodo, setNewTodo] = useState<TodoProps[]>([]);
+  const [insertTodo, setInsertTodo] = useState<TodoProps[]>([]);
 
   const daysInMonth = date.daysInMonth();
   const skip = (date.startOf('month').day() || 7) - 1;
@@ -59,7 +59,7 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date }) => {
   useEffect(() => localStorage.setItem('todo', JSON.stringify(todos)), [todos]);
   useEffect(() => {
     const getLocalStorage = JSON.parse(localStorage.getItem('todo') || '{}');
-    setNewTodo(getLocalStorage);
+    setInsertTodo(getLocalStorage);
   }, [todos]);
 
   return (
@@ -107,7 +107,7 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date }) => {
                 </>
               )}
               <CalendarCell date={date} />
-              {newTodo.map((item, index) => (
+              {insertTodo.map((item, index) => (
                 <div key={index}>
                   {item.id === index && (
                     <>
@@ -120,7 +120,7 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date }) => {
           );
         })}
       </CalendarContents>
-      {newTodo.map((item, index) => (
+      {insertTodo.map((item, index) => (
         <div key={index}>
           {item.id === index && (
             <>
