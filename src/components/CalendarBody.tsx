@@ -16,9 +16,10 @@ interface DateBodyContentsProps {
   setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
 }
 
-const CalendarBody: React.FC<DateBodyContentsProps> = ({ date, setDate }) => {
+const CalendarBody: React.FC<DateBodyContentsProps> = ({ date }) => {
   const [selected, setSelected] = useState<dayjs.Dayjs>(dayjs());
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [todos, setTodos] = useState<TodoProps[]>([]);
 
   const daysInMonth = date.daysInMonth();
   const skip = (date.startOf('month').day() || 7) - 1;
@@ -34,15 +35,16 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date, setDate }) => {
   const indexId = useRef(0);
   interface TodoProps {
     id: number;
-    value: dayjs.Dayjs | number;
+    todo: dayjs.Dayjs;
+    value: string;
     text: string | number | string[];
   }
-  const [todos, setTodos] = useState<TodoProps[]>([]);
 
   const onInsert = (text: string) => {
     const todo = {
       id: indexId.current,
-      value: selected,
+      todo: selected,
+      value: date.format('YY-MM-DD'),
       text: text,
     };
     indexId.current += 1;
@@ -79,37 +81,36 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date, setDate }) => {
               : '';
 
           return (
-            <div key={index}>
-              <CalendarCellWrap
-                className={`${todayMark} ${selecTedMark} ${saturdayMark} ${sundayMark}`}
-                onClick={() => setSelected(cellDate + 1)}
-              >
-                {selecTedMark && (
-                  <>
-                    <CalnderAddMark onClick={() => setOpenModal(true)}>
-                      <FiPlusCircle />
-                    </CalnderAddMark>
-                    {openModal && (
-                      <CalendarModalBackground>
-                        <CalendarModal
-                          setOpenModal={setOpenModal}
-                          onInsert={onInsert}
-                        />
-                      </CalendarModalBackground>
-                    )}
-                  </>
-                )}
-                <CalendarCell date={cellDate} />
-              </CalendarCellWrap>
-            </div>
+            <CalendarCellWrap
+              className={`${todayMark} ${selecTedMark} ${saturdayMark} ${sundayMark}`}
+              onClick={() => setSelected(cellDate + 1)}
+              key={index}
+            >
+              {selecTedMark && (
+                <>
+                  <CalnderAddMark onClick={() => setOpenModal(true)}>
+                    <FiPlusCircle />
+                  </CalnderAddMark>
+                  {openModal && (
+                    <CalendarModalBackground>
+                      <CalendarModal
+                        setOpenModal={setOpenModal}
+                        onInsert={onInsert}
+                      />
+                    </CalendarModalBackground>
+                  )}
+                </>
+              )}
+              <CalendarCell date={cellDate} />
+            </CalendarCellWrap>
           );
         })}
       </CalendarContents>
-      {newTodo.map((item: any, index: number) => (
+      {newTodo.map((item, index) => (
         <div key={index}>
           {item.id === index && (
             <>
-              {item.value}일 : {item.text}
+              {item.id} : {item.text}
             </>
           )}
         </div>
@@ -117,6 +118,12 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ date, setDate }) => {
     </>
   );
 };
+
+const CalendarContents = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+`;
 
 const CalnderAddMark = styled.button`
   all: unset;
@@ -139,12 +146,6 @@ const CalendarCellWrap = styled.div`
   &.sunday {
     color: blue;
   }
-`;
-
-const CalendarContents = styled.div`
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
 `;
 
 const CalendarModalBackground = styled.div`
