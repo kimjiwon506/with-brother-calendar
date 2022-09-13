@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import dayjs from 'dayjs';
 import CalendarCell from './CalendarCell';
-import CalendarHeader from './CalendarHeader';
 import CalendarModal from './CalendarModal';
 import styled from 'styled-components';
 import { FiPlusCircle } from 'react-icons/fi';
