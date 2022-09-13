@@ -8,7 +8,7 @@ interface CalendarCellProps {
 const CalendarCell: React.FC<CalendarCellProps> = ({ date }) => {
   return (
     <>
-      <CellButton>{isFinite(date) && ++date}</CellButton>
+      <CellButton>{isFinite(date) && date}</CellButton>
     </>
   );
 };

@@ -18,10 +18,15 @@ import CalendarHeader from '../components/CalendarHeader';
 
 const Calendar = () => {
   const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
+  const testYear = dayjs().year();
+  const testMonthText = dayjs().format('MMMM');
+  const testMonthNumber = dayjs().format('MM');
+
+  // console.log();
   return (
     <CalendarWrap>
-      <CalendarHeader date={date} setDate={setDate} />
-      <CalendarBody date={date} setDate={setDate} />
+      <CalendarHeader dayjsInstance={date} setDate={setDate} />
+      <CalendarBody dayjsInstance={date} setDate={setDate} />
     </CalendarWrap>
   );
 };

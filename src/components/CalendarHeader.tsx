@@ -3,21 +3,30 @@ import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 
 interface DateHeaderProps {
-  date: dayjs.Dayjs;
+  dayjsInstance: dayjs.Dayjs;
   setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
 }
 
-const CalendarHeader: React.FC<DateHeaderProps> = ({ date, setDate }) => {
+/**
+ * 
+ *  @TODO 
+ *  1. mark 할 때, localstorage 저장한 값과 풀 데이트 YYYY-MM-DD 비교해야 한다.
+ * 
+ *  >> 현재 월, 년도 calendar body 알려줘야 한다
+ *  -
+ *   
+ */
+
+const CalendarHeader: React.FC<DateHeaderProps> = ({ dayjsInstance, setDate }) => {
   return (
     <CalendarHeaderWrap>
       <ControlMonth>
-        <ControlMonthButton onClick={() => setDate(date.add(-1, 'month'))}>
-          -
+        <ControlMonthButton onClick={() => setDate(dayjsInstance.add(-1, 'month'))}>
         </ControlMonthButton>
-        <p>{date.format('MMMM YYYY')}</p>
+        <p>{dayjsInstance.format('MMMM YYYY')}</p>
         <ControlMonthButton
           onClick={() => {
-            setDate(date.add(1, 'month'));
+            setDate(dayjsInstance.add(1, 'month'));
           }}
         >
           +
