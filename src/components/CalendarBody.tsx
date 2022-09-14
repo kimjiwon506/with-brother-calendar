@@ -1,11 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-} from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import dayjs from 'dayjs';
 import CalendarCell from './CalendarCell';
 import CalendarModal from './CalendarModal';
@@ -17,7 +10,7 @@ interface DateBodyProps {
   setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
 }
 interface TodoProps {
-  value: string;
+  id: string;
   text: string;
 }
 
@@ -39,23 +32,28 @@ const CalendarBody: React.FC<DateBodyProps> = ({ dayjsInstance }) => {
   ];
 
   const todayDate = dayjsInstance.get('date');
-  const indexId = useRef(0);
 
-  const onInsert = useCallback(
-    (selectedDate: string) => (text: string) => {
-      const year = dayjsInstance.get('year');
-      const month = dayjsInstance.get('month') + 1;
+  const onInsert = (selectedDate: string) => (text: string) => {
+    const year = dayjsInstance.get('year');
+    const month = dayjsInstance.get('month') + 1;
 
-      const todo = {
-        id: indexId.current,
-        value: `${year}-${month}-${selectedDate}`,
-        text: text,
-      };
-      indexId.current += 1;
-      setTodos(todos.concat(todo));
-    },
-    [todos],
-  );
+    const todo = {
+      id: `${year}-${month}-${selectedDate}`,
+      text: text,
+    };
+
+    // todos.forEach(
+    //   item =>
+    //     item.id.indexOf(`${selectedDate}`) ===
+    //       todo.id.indexOf(`${selectedDate}`) &&
+    // );
+    setTodos(todos.concat(todo));
+  };
+  // console.log(todos.slice(1, 2));
+
+  useEffect(() => {
+    setTodos(todos.slice(1, 2));
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('todo', JSON.stringify(todos));
@@ -110,7 +108,7 @@ const CalendarBody: React.FC<DateBodyProps> = ({ dayjsInstance }) => {
               <CalendarCell date={date} />
               {todos
                 .filter(item => {
-                  const todoDate = item.value.split('-')[2];
+                  const todoDate = item.id.split('-')[2];
                   return Number(todoDate) === date;
                 })
                 .map((item, index) => {
