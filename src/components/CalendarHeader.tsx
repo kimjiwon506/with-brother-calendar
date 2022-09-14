@@ -1,37 +1,36 @@
 import dayjs from 'dayjs';
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import styled from 'styled-components';
-
 interface DateHeaderProps {
   dayjsInstance: dayjs.Dayjs;
   setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
 }
 
 /**
- * 
- *  @TODO 
+ *  @TODO
  *  1. mark 할 때, localstorage 저장한 값과 풀 데이트 YYYY-MM-DD 비교해야 한다.
- * 
  *  >> 현재 월, 년도 calendar body 알려줘야 한다
- *  -
- *   
  */
 
-const CalendarHeader: React.FC<DateHeaderProps> = ({ dayjsInstance, setDate }) => {
+const CalendarHeader: React.FC<DateHeaderProps> = ({
+  dayjsInstance,
+  setDate,
+}) => {
   return (
-    <CalendarHeaderWrap>
-      <ControlMonth>
-        <ControlMonthButton onClick={() => setDate(dayjsInstance.add(-1, 'month'))}>
-        </ControlMonthButton>
+    <CalendarHeaderWrapStyle>
+      <MonthWrap>
+        <MonthButton onClick={() => setDate(dayjsInstance.add(-1, 'month'))}>
+          -
+        </MonthButton>
         <p>{dayjsInstance.format('MMMM YYYY')}</p>
-        <ControlMonthButton
+        <MonthButton
           onClick={() => {
             setDate(dayjsInstance.add(1, 'month'));
           }}
         >
           +
-        </ControlMonthButton>
-      </ControlMonth>
+        </MonthButton>
+      </MonthWrap>
       <WeekDays>
         <p>Mon</p>
         <p>Tue</p>
@@ -41,22 +40,22 @@ const CalendarHeader: React.FC<DateHeaderProps> = ({ dayjsInstance, setDate }) =
         <p>Sat</p>
         <p>Sun</p>
       </WeekDays>
-    </CalendarHeaderWrap>
+    </CalendarHeaderWrapStyle>
   );
 };
 
-const CalendarHeaderWrap = styled.div`
+const CalendarHeaderWrapStyle = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
-const ControlMonth = styled.div`
+const MonthWrap = styled.div`
   display: flex;
   align-items: center;
 `;
 
-const ControlMonthButton = styled.div`
+const MonthButton = styled.div`
   all: unset;
   display: block;
   font-size: 20px;
@@ -67,7 +66,7 @@ const ControlMonthButton = styled.div`
 const WeekDays = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(7, 2fr);
+  grid-template-columns: repeat(7, 1fr);
   text-align: center;
 `;
 

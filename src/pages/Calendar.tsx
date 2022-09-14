@@ -5,24 +5,18 @@ import styled from 'styled-components';
 import CalendarHeader from '../components/CalendarHeader';
 
 /**
- * TODO:
- * 1.Cell 컴포넌트로 분리
- * 2.modal 컴포넌트 분리
- * 3.토요일, 일요일 색상변경
- * 4.Todo에 현재 date 추가한뒤 스토리지에 올리기
- * pages - calendar
- * components - calendarCell
- *            - calendarHeader
- *            - calendarBody
+ * @TODO
+ * 1. interface -> type으로 변경 : interface는 사용설명서, type : props의 자료형이 무엇인지
+ * 2. id값을 날짜로 변경
+ * 3. calendar cell에 텍스트가 있을경우 새로운 내용을 입력하면 덮어씌어지도록
+ * 4. 클릭한 날짜에 todo가 없을경우 새로운 내용이 생기도록
+ * component : 함수
+ * type , interface : 사용설명서
  */
 
-const Calendar = () => {
+const Calendar: React.FC = () => {
   const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
-  const testYear = dayjs().year();
-  const testMonthText = dayjs().format('MMMM');
-  const testMonthNumber = dayjs().format('MM');
 
-  // console.log();
   return (
     <CalendarWrap>
       <CalendarHeader dayjsInstance={date} setDate={setDate} />

@@ -12,20 +12,21 @@ import CalendarModal from './CalendarModal';
 import styled from 'styled-components';
 import { FiPlusCircle } from 'react-icons/fi';
 
-interface DateBodyContentsProps {
+interface DateBodyProps {
   dayjsInstance: dayjs.Dayjs;
   setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
 }
+interface TodoProps {
+  value: string;
+  text: string;
+}
 
-const CalendarBody: React.FC<DateBodyContentsProps> = ({ dayjsInstance }) => {
+const CalendarBody: React.FC<DateBodyProps> = ({ dayjsInstance }) => {
   const [selected, setSelected] = useState<dayjs.Dayjs>(dayjs());
-  // const [selected, setSelected] = useState(0)
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [todos, setTodos] = useState<TodoProps[]>(() => {
     return JSON.parse(localStorage.getItem('todo') || '[]');
   });
-
-  console.log(selected)
 
   const daysInMonth = dayjsInstance.daysInMonth();
   const skip = (dayjsInstance.startOf('month').day() || 7) - 1;
@@ -37,19 +38,14 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ dayjsInstance }) => {
     ...Array(rest).fill(NaN),
   ];
 
-  const today = dayjsInstance.get('date');
+  const todayDate = dayjsInstance.get('date');
   const indexId = useRef(0);
-  interface TodoProps {
-    id: number;
-    value: string;
-    text: string;
-  }
 
-  const onInsert = 
+  const onInsert = useCallback(
     (selectedDate: string) => (text: string) => {
       const year = dayjsInstance.get('year');
       const month = dayjsInstance.get('month') + 1;
-      
+
       const todo = {
         id: indexId.current,
         value: `${year}-${month}-${selectedDate}`,
@@ -57,38 +53,36 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ dayjsInstance }) => {
       };
       indexId.current += 1;
       setTodos(todos.concat(todo));
-    }
+    },
+    [todos],
+  );
 
   useEffect(() => {
     localStorage.setItem('todo', JSON.stringify(todos));
   }, [todos]);
 
-  console.log('todos : ', todos)
-
-
   return (
     <>
       <CalendarContents>
         {calendarArray.map((_date, index) => {
-          //여기 
-          const date = _date + 1
-          // console.log('date:',date)
-          const todayMark = date === today ? 'today' : '';
+          const date = _date + 1;
+          const weekend = index + 1;
+          const todayMark = date === todayDate ? 'today' : '';
           const selectedMark = selected === date ? 'selected' : '';
           const saturdayMark =
-            index + 1 === 6 ||
-            index + 1 === 13 ||
-            index + 1 === 20 ||
-            index + 1 === 27 ||
-            index + 1 === 34
+            weekend === 6 ||
+            weekend === 13 ||
+            weekend === 20 ||
+            weekend === 27 ||
+            weekend === 34
               ? 'saturday'
               : '';
           const sundayMark =
-            index + 1 === 7 ||
-            index + 1 === 14 ||
-            index + 1 === 21 ||
-            index + 1 === 28 ||
-            index + 1 === 35
+            weekend === 7 ||
+            weekend === 14 ||
+            weekend === 21 ||
+            weekend === 28 ||
+            weekend === 35
               ? 'sunday'
               : '';
 
@@ -104,57 +98,28 @@ const CalendarBody: React.FC<DateBodyContentsProps> = ({ dayjsInstance }) => {
                     <FiPlusCircle />
                   </CalnderAddMark>
                   {openModal && (
-                    <CalendarModalBackground>
+                    <CalendarModalBackgroundStyle>
                       <CalendarModal
                         setOpenModal={setOpenModal}
                         onInsert={onInsert(date)}
                       />
-                    </CalendarModalBackground>
+                    </CalendarModalBackgroundStyle>
                   )}
                 </>
               )}
               <CalendarCell date={date} />
               {todos
-                .filter((item) => {
-                  // const todoDate = item.value.split('-')[2]; //날짜비교 데이터
-                  //const todoYMD = item.value; //2022-09-15 string
-                  //console.log(item.value, 'item.value', date);
-                  //const searchDate = `${header.year}-${header.month}-${date}`;  
-                  
-                  // 
-                  // const dateSetNumber = dayjs(`2022-09-${selected}`).date();
-                    
-                  // console.log(
-                  //   'todos : ',
-                  //   item,
-                  //   date,
-                  //   Number(todoDate) === date,
-                  // );
-                  // console.log('todoDate',todoDate)
-                  // console.log(Number(todoDate), dateSetNumber);
-                  // return Number(todoDate) === date;
-                  //return todoYMD === searchDate;
+                .filter(item => {
+                  const todoDate = item.value.split('-')[2];
+                  return Number(todoDate) === date;
                 })
-                // .map((item, index) => (
-                //   <div key={index}>{item.id === index && <>{item.text}</>}</div>
-                // ))}
-                .map((item,index) => {
-                  return <div key={index}>{item.text}</div>
-                })
-              }
+                .map((item, index) => {
+                  return <div key={index}>{item.text}</div>;
+                })}
             </CalendarCellWrap>
           );
         })}
       </CalendarContents>
-      {/* {todos.filter((item) => item).map((item, index) => (
-        <div key={index}>
-          {item.id === index && (
-            <>
-              {item.id} : {item.text}
-            </>
-          )}
-        </div>
-      ))} */}
     </>
   );
 };
@@ -188,7 +153,7 @@ const CalendarCellWrap = styled.div`
   }
 `;
 
-const CalendarModalBackground = styled.div`
+const CalendarModalBackgroundStyle = styled.div`
   &:before {
     content: '';
     background: rgba(0, 0, 0, 0.5);
