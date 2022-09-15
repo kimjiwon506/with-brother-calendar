@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface CalendarCellProps {
+type CalendarCellProps = {
   date: number;
-}
+};
 
 const CalendarCell: React.FC<CalendarCellProps> = ({ date }) => {
   return (

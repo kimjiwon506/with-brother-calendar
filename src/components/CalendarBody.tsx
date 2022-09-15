@@ -5,14 +5,14 @@ import CalendarModal from './CalendarModal';
 import styled from 'styled-components';
 import { FiPlusCircle } from 'react-icons/fi';
 
-interface DateBodyProps {
+type DateBodyProps = {
   dayjsInstance: dayjs.Dayjs;
   setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
-}
-interface TodoProps {
+};
+type TodoProps = {
   id: string;
   text: string;
-}
+};
 
 const CalendarBody: React.FC<DateBodyProps> = ({ dayjsInstance }) => {
   const [selected, setSelected] = useState<dayjs.Dayjs>(dayjs());
@@ -42,22 +42,19 @@ const CalendarBody: React.FC<DateBodyProps> = ({ dayjsInstance }) => {
       text: text,
     };
 
-    // todos.forEach(
-    //   item =>
-    //     item.id.indexOf(`${selectedDate}`) ===
-    //       todo.id.indexOf(`${selectedDate}`) &&
-    // );
+    todos.map(
+      item => item.id === todo.id && item.id === item.id && todos.splice(0, 1),
+    );
     setTodos(todos.concat(todo));
   };
-  // console.log(todos.slice(1, 2));
 
-  useEffect(() => {
-    setTodos(todos.slice(1, 2));
-  }, []);
+  // useEffect(() => {
+  //   setTodos(todos.slice(1, 2));
+  // }, []);
 
   useEffect(() => {
     localStorage.setItem('todo', JSON.stringify(todos));
-  }, [todos]);
+  });
 
   return (
     <>

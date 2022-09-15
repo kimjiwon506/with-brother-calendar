@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import styled from 'styled-components';
 
-interface ModalProps {
+type ModalProps = {
   setOpenModal: Dispatch<SetStateAction<boolean>>;
   onInsert: any;
-}
+};
 
 const CalendarModal: React.FC<ModalProps> = ({ setOpenModal, onInsert }) => {
   const [value, setValue] = useState<string>('');
