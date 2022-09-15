@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-type CalendarCellProps = {
+type CalendarCell = {
   date: number;
 };
 
-const CalendarCell: React.FC<CalendarCellProps> = ({ date }) => {
+const CalendarCell: React.FC<CalendarCell> = ({ date }) => {
   return (
     <>
       <CellButton>{isFinite(date) && date}</CellButton>

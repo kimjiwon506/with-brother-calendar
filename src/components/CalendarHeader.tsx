@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 
-type DateHeaderProps = {
+type DateHeader = {
   dayjsInstance: dayjs.Dayjs;
   setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
 };
@@ -13,10 +13,7 @@ type DateHeaderProps = {
  *  >> 현재 월, 년도 calendar body 알려줘야 한다
  */
 
-const CalendarHeader: React.FC<DateHeaderProps> = ({
-  dayjsInstance,
-  setDate,
-}) => {
+const CalendarHeader: React.FC<DateHeader> = ({ dayjsInstance, setDate }) => {
   return (
     <CalendarHeaderWrapStyle>
       <MonthWrap>

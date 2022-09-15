@@ -5,19 +5,19 @@ import CalendarModal from './CalendarModal';
 import styled from 'styled-components';
 import { FiPlusCircle } from 'react-icons/fi';
 
-type DateBodyProps = {
+type DateBody = {
   dayjsInstance: dayjs.Dayjs;
   setDate: Dispatch<SetStateAction<dayjs.Dayjs>>;
 };
-type TodoProps = {
+type Todo = {
   id: string;
   text: string;
 };
 
-const CalendarBody: React.FC<DateBodyProps> = ({ dayjsInstance }) => {
+const CalendarBody: React.FC<DateBody> = ({ dayjsInstance }) => {
   const [selected, setSelected] = useState<dayjs.Dayjs>(dayjs());
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [todos, setTodos] = useState<TodoProps[]>(() => {
+  const [todos, setTodos] = useState<Todo[]>(() => {
     return JSON.parse(localStorage.getItem('todo') || '[]');
   });
 
@@ -45,12 +45,9 @@ const CalendarBody: React.FC<DateBodyProps> = ({ dayjsInstance }) => {
     todos.map(
       item => item.id === todo.id && item.id === item.id && todos.splice(0, 1),
     );
+
     setTodos(todos.concat(todo));
   };
-
-  // useEffect(() => {
-  //   setTodos(todos.slice(1, 2));
-  // }, []);
 
   useEffect(() => {
     localStorage.setItem('todo', JSON.stringify(todos));
